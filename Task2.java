@@ -304,6 +304,7 @@ public class Task2 {
 			System.err.println(errorInput + " is an invalid input string.");
 			return;
 		}
+
 		boolean error4 = false;
 		for(String state : states){
 			for(String alphabet : alphabets){
@@ -314,9 +315,11 @@ public class Task2 {
 				}
 			}
 		}
+		
 		if(error4){
 			return;
 		}
+
 		System.out.println("DFA Successfully Constructed");
 		for(String input : inputString){
 			String result = processInput(input);
@@ -366,44 +369,27 @@ public class Task2 {
 		}
 		return currentState;
 	}
+
 	private static boolean checkStartState() {
 		return inArray(startState, states);
 	}
+
 	private static boolean checkFinalState() {
 		for(String goal : finalState){
 			if(goal.equals("")){
 				continue;
 			}
 			if(!inArray(goal,states)){
-				System.err.println("Invalid accept state "+goal);
+				System.err.println("Invalid accept state " + goal);
 				return false;
 			}
 		}
 		return true;
 	}
+
 	private static boolean checkIfEmpty() {
-		if(line1 == "") {
-			System.err.println("First line is an");
-			return false;
-		}
-		if(line2 == "") {
-			System.err.println("Second line is an");
-			return false;
-		}
-		if(line3 == "") {
-			System.err.println("Third line is an");
-			return false;
-		}
-		if(line4 == "") {
-			System.err.println("Fourth line is an");
-			return false;
-		}
-		if(line5 == "") {
-			System.err.println("Fifth line is an");
-			return false;
-		}
-		if(line6 == "") {
-			System.err.println("Last line is not an");
+		if(line1 == "" || line2 == "" || line3 == "" || line4 == "" || line5 == ""|| line6 == "") {
+			System.err.println("Error. Line is empty.");
 			return false;
 		}
 		return true;
