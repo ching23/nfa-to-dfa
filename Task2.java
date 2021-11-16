@@ -63,7 +63,7 @@ public class Task2 {
 
 			// if cannot check start state, print invalid start state and continue
 			if(!checkStartState()){
-				System.err.println("Invalid start state " + startState);
+				System.err.println(startState + " is an invalid state state.");
 				continue;
 			}
 
@@ -86,7 +86,7 @@ public class Task2 {
 				for ( int i = 0 ; i < 2 ; i++){
 					if(!inArray(tranArray[i], states)){
 						error2 = true;
-						System.err.println("Invalid transition. " + tranArray[i] + " is not included in the states.");
+						System.err.println("Error. Transition " + tranArray[i] + " is not included.");
 						break;
 					}	
 				}
@@ -94,7 +94,7 @@ public class Task2 {
 				// error if there is no alphabet
 				if(!inArray(tranArray[2], alphabets) &&!tranArray[2].equals("$")){
 					error2 = true;
-					System.err.println("Invalid transition. "+tranArray[2]+" is not included in the alphabet.");
+					System.err.println("Error. Transition " + tranArray[2] + " is not included.");
 				}
 				if(error2){
 					break;
@@ -104,7 +104,7 @@ public class Task2 {
 
 			// if there is an error, print the error and continue
 			if(error){
-				System.err.println("Invalid transition. Transitions should be of size 3");
+				System.err.println("Error. Transition must be size of 3.");
 				continue;
 			}
 			// if there is an error, continue
@@ -129,12 +129,12 @@ public class Task2 {
 
 			// if there is an error within the input string, print the error and continue
 			if(error3){
-				System.err.println("Invalid input string at " + errorInput);
+				System.err.println(errorInput + " is an invalid input string.");
 				continue;
 			}
 
-			System.out.println("NFA Constructed Successfully"); // if a valid NFA, print so
-			System.out.println("Equivalent DFA: "); // if a DFA can be made, print so
+			System.out.println("NFA Successfully Constructed"); // if a valid NFA, print so
+			System.out.println("Constructing DFA: "); // if a DFA can be made, print so
 			
 			// create start state of DFA
 			ArrayList<String> initialDFA = getAllEpsilonClosure(startState, 
@@ -236,7 +236,7 @@ public class Task2 {
 		
 		// if there is no start state, return
 		if(!checkStartState()){
-			System.err.println("Invalid start state " + startState);
+			System.err.println(startState + " is an invalid state state.");
 			return;
 		}
 
@@ -258,7 +258,7 @@ public class Task2 {
 			for ( int i = 0 ; i < 2 ;i++){
 				if(!inArray(tranArray[i], states)) {
 					error2 = true;
-					System.err.println("Invalid transition. "+tranArray[i]+" is not included in the states.");
+					System.err.println("Error. Transition " + tranArray[i] + " is not included.");
 					break;
 				}	
 			}
@@ -266,7 +266,7 @@ public class Task2 {
 			// error if other characters are included in DFA
 			if(!inArray(tranArray[2], alphabets) &&!tranArray[2].equals("$")){
 				error2 = true;
-				System.err.println("Invalid transition. " + tranArray[2] + " is not included in the alphabet.");
+				System.err.println("Error. Transition " + tranArray[2] + " is not included.");
 			}
 			if(error2) {
 				break;
@@ -276,7 +276,7 @@ public class Task2 {
 
 		// error if transition size is less than 3
 		if(error) {
-			System.err.println("Invalid transition. Transitions should be of size 3");
+			System.err.println("Error. Transition must be size of 3.");
 			return;
 		}
 		if(error2) {
@@ -301,7 +301,7 @@ public class Task2 {
 			}
 		}
 		if(error3){
-			System.err.println("Invalid input string at " + errorInput);
+			System.err.println(errorInput + " is an invalid input string.");
 			return;
 		}
 		boolean error4 = false;
@@ -309,7 +309,7 @@ public class Task2 {
 			for(String alphabet : alphabets){
 				if(!existsTransition(state,alphabet)){
 					error4 = true;
-					System.err.println("Missing transition for state " + state+" on input " + alphabet );
+					System.err.println("Missing transition for state " + state + " on input " + alphabet );
 					break;
 				}
 			}
@@ -317,7 +317,7 @@ public class Task2 {
 		if(error4){
 			return;
 		}
-		System.out.println("DFA Constructed Successfully");
+		System.out.println("DFA Successfully Constructed");
 		for(String input : inputString){
 			String result = processInput(input);
 			if(inArray(result, finalState)){
