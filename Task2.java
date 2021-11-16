@@ -1,5 +1,3 @@
-//package compilers;
-
 // ###############################################################################################################################
 // Caitlin ################################################################################################################
 
@@ -48,7 +46,7 @@ public class Task2 {
 			line6 = buffReader.readLine(); // should be empty
 
 			// if a line is empty, print empty line and continue
-			if(!checkLines()){
+			if(!checkIfEmpty()){
 				System.err.print("empty line.");
 				continue;
 			}
@@ -56,7 +54,7 @@ public class Task2 {
 			finalState = line1.split(",");
 			
 			// if cannot check final state, continue
-			if(!checkGoal()){
+			if(!checkFinalState()){
 				continue;
 			}
 
@@ -64,43 +62,44 @@ public class Task2 {
 			startState = line3;
 
 			// if cannot check start state, print invalid start state and continue
-			if(!checkStart()){
+			if(!checkStartState()){
 				System.err.println("Invalid start state " + startState);
 				continue;
 			}
 
+			transitions = line4.split("#"); // print a # to split each transition
+			
 			boolean error = false;
 			boolean error2 = false;
-			transitions = line4.split("#"); // print a # to split each transition
 
 			// check for errors
 			for(String transition : transitions){
 				error2 = false;
-				String [] transitionArray = transition.split(",");
+				String [] tranArray = transition.split(",");
 				// error if transition length is not 3
-				if(transitionArray.length != 3){
+				if(tranArray.length != 3){
 					error = true;
 					break;
 				}
 
 				// error if there are no states
 				for ( int i = 0 ; i < 2 ; i++){
-					if(!inArray(transitionArray[i], states)){
+					if(!inArray(tranArray[i], states)){
 						error2 = true;
-						System.err.println("Invalid transition. "+transitionArray[i]+" is not included in the states.");
+						System.err.println("Invalid transition. " + tranArray[i] + " is not included in the states.");
 						break;
 					}	
 				}
 
 				// error if there is no alphabet
-				if(!inArray(transitionArray[2], alphabets) &&!transitionArray[2].equals("$")){
+				if(!inArray(tranArray[2], alphabets) &&!tranArray[2].equals("$")){
 					error2 = true;
-					System.err.println("Invalid transition. "+transitionArray[2]+" is not included in the alphabet.");
+					System.err.println("Invalid transition. "+tranArray[2]+" is not included in the alphabet.");
 				}
 				if(error2){
 					break;
 				}
-				tranList.add(new Transition(transitionArray[0],transitionArray[1],transitionArray[2]));
+				tranList.add(new Transition(tranArray[0],tranArray[1],tranArray[2]));
 			}
 
 			// if there is an error, print the error and continue
@@ -115,14 +114,14 @@ public class Task2 {
 
 			inputString = line5.split("#");
 			boolean error3 = false;
-			String badInput = "";
+			String errorInput = "";
 			for(String input : inputString){
 				String [] inputArray = input.split(",");
 				for(String inputAlphabet : inputArray){
 					// if input string doesn't match the alphabet, break
 					if(!inArray(inputAlphabet, alphabets)){
 						error3 = true;
-						badInput = inputAlphabet;
+						errorInput = inputAlphabet;
 						break;
 					}
 				}
@@ -130,7 +129,7 @@ public class Task2 {
 
 			// if there is an error within the input string, print the error and continue
 			if(error3){
-				System.err.println("Invalid input string at " + badInput);
+				System.err.println("Invalid input string at " + errorInput);
 				continue;
 			}
 
@@ -138,20 +137,20 @@ public class Task2 {
 			System.out.println("Equivalent DFA: "); // if a DFA can be made, print so
 			
 			// create start state of DFA
-			ArrayList<String> initialStateDFA = getAllEpsilonClosure(startState, 
+			ArrayList<String> initialDFA = getAllEpsilonClosure(startState, 
 				tranList.toArray(new Transition[tranList.size()]));
 			// create DFA transitions by storing the transitions into a new array list
 			ArrayList<Transition> NFATransitions = new ArrayList<>();
 			// create all DFA states by storing the states into a new array list
 			ArrayList<ArrayList<String>> allStates = new ArrayList<>();
-			NFATransitions = makeTransitions(initialStateDFA, 
+			NFATransitions = makeTransitions(initialDFA, 
 				tranList.toArray(new Transition[tranList.size()]), alphabets);
 			
 			// loop through all the NFA transitions to create new DFA transitions
 			for(int i = 0; i < NFATransitions.size() ; i ++) {
-				addToStates(allStates, NFATransitions.get(i).fromAL);
-				addToStates(allStates, NFATransitions.get(i).toAL);
-				addTransitionsIfNotExists(NFATransitions, makeTransitions(NFATransitions.get(i).toAL, 
+				addStates(allStates, NFATransitions.get(i).fromAL);
+				addStates(allStates, NFATransitions.get(i).toAL);
+				addTransitions(NFATransitions, makeTransitions(NFATransitions.get(i).toAL, 
 					tranList.toArray(new Transition[tranList.size()]), alphabets));
 			}
 			// print all the DFA states
@@ -186,7 +185,7 @@ public class Task2 {
 			System.out.println("DFA Alphabet: " + line2);
 			
 			// print the initial states
-			String DFAInitState = printStates(initialStateDFA);
+			String DFAInitState = printStates(initialDFA);
 			System.out.println("DFA Initial State: " + DFAInitState);
 			
 			// print all transitions (DFA and NFA)
@@ -227,7 +226,7 @@ public class Task2 {
 		finalState = line1.split(",");
 		
 		// if there is no final state, return
-		if(!checkGoal()){
+		if(!checkFinalState()){
 			return;
 		}
 
@@ -236,7 +235,7 @@ public class Task2 {
 		startState = line3;
 		
 		// if there is no start state, return
-		if(!checkStart()){
+		if(!checkStartState()){
 			System.err.println("Invalid start state " + startState);
 			return;
 		}
@@ -249,30 +248,30 @@ public class Task2 {
 		// check for errors 
 		for(String transition : transitions) {
 			error2 = false;
-			String [] transitionArray = transition.split(",");
-			if(transitionArray.length != 3) {
+			String [] tranArray = transition.split(",");
+			if(tranArray.length != 3) {
 				error = true;
 				break;
 			}
 
 			// error if there are no states
 			for ( int i = 0 ; i < 2 ;i++){
-				if(!inArray(transitionArray[i], states)) {
+				if(!inArray(tranArray[i], states)) {
 					error2 = true;
-					System.err.println("Invalid transition. "+transitionArray[i]+" is not included in the states.");
+					System.err.println("Invalid transition. "+tranArray[i]+" is not included in the states.");
 					break;
 				}	
 			}
 
 			// error if other characters are included in DFA
-			if(!inArray(transitionArray[2], alphabets) &&!transitionArray[2].equals("$")){
+			if(!inArray(tranArray[2], alphabets) &&!tranArray[2].equals("$")){
 				error2 = true;
-				System.err.println("Invalid transition. " + transitionArray[2] + " is not included in the alphabet.");
+				System.err.println("Invalid transition. " + tranArray[2] + " is not included in the alphabet.");
 			}
 			if(error2) {
 				break;
 			}
-			tranList.add(new Transition(transitionArray[0],transitionArray[1],transitionArray[2]));
+			tranList.add(new Transition(tranArray[0],tranArray[1],tranArray[2]));
 		}
 
 		// error if transition size is less than 3
@@ -286,7 +285,7 @@ public class Task2 {
 
 		inputString = line5.split("#");
 		boolean error3 = false;
-		String badInput = "";
+		String errorInput = "";
 		for(String input : inputString){
 			String [] inputArray = input.split(",");
 			for(String inputAlphabet : inputArray){
@@ -296,13 +295,13 @@ public class Task2 {
 // ###############################################################################################################################
 // Lilian ########################################################################################################################
 
-					badInput = inputAlphabet;
+					errorInput = inputAlphabet;
 					break;
 				}
 			}
 		}
 		if(error3){
-			System.err.println("Invalid input string at " + badInput);
+			System.err.println("Invalid input string at " + errorInput);
 			return;
 		}
 		boolean error4 = false;
@@ -330,12 +329,13 @@ public class Task2 {
 		System.out.println("");
 	}
 
-	private static void addToStates(ArrayList<ArrayList<String>> allStates, ArrayList<String> someStates) {
+	private static void addStates(ArrayList<ArrayList<String>> allStates, ArrayList<String> someStates) {
 			if(!allStates.contains(someStates)) {
 				allStates.add(someStates);
 			}		
 	}
-	public static void addTransitionsIfNotExists(ArrayList<Transition> nFATransitions,ArrayList<Transition> newTransitions) {
+
+	public static void addTransitions(ArrayList<Transition> nFATransitions,ArrayList<Transition> newTransitions) {
 		for(int i = 0 ; i< newTransitions.size() ; i++) {
 			Collections.sort(newTransitions.get(i).fromAL);
 			Collections.sort(newTransitions.get(i).toAL);
@@ -352,6 +352,7 @@ public class Task2 {
 			}
 		}
 	}
+
 	private static String processInput(String input) {
 		String currentState = startState;
 		String [] inputArray = input.split(",");
@@ -365,10 +366,10 @@ public class Task2 {
 		}
 		return currentState;
 	}
-	private static boolean checkStart() {
+	private static boolean checkStartState() {
 		return inArray(startState, states);
 	}
-	private static boolean checkGoal() {
+	private static boolean checkFinalState() {
 		for(String goal : finalState){
 			if(goal.equals("")){
 				continue;
@@ -380,28 +381,28 @@ public class Task2 {
 		}
 		return true;
 	}
-	private static boolean checkLines() {
-		if(line1 == ""){
+	private static boolean checkIfEmpty() {
+		if(line1 == "") {
 			System.err.println("First line is an");
 			return false;
 		}
-		if(line2 == ""){
+		if(line2 == "") {
 			System.err.println("Second line is an");
 			return false;
 		}
-		if(line3 == ""){
+		if(line3 == "") {
 			System.err.println("Third line is an");
 			return false;
 		}
-		if(line4 == ""){
+		if(line4 == "") {
 			System.err.println("Fourth line is an");
 			return false;
 		}
-		if(line5 == ""){
+		if(line5 == "") {
 			System.err.println("Fifth line is an");
 			return false;
 		}
-		if(line6 == ""){
+		if(line6 == "") {
 			System.err.println("Last line is not an");
 			return false;
 		}
@@ -464,6 +465,7 @@ public class Task2 {
 		}
 		return result;
 	}
+	
 	public static void addIfNotContains(ArrayList<String> result, ArrayList<String> arrayToBeAdded) {
 		for(int i = 0; i<arrayToBeAdded.size();i++) {
 			if(!result.contains(arrayToBeAdded.get(i))) {
@@ -483,6 +485,7 @@ public class Task2 {
 		}
 		return result;
 	}
+
 	public static String printStates(ArrayList<String>states) {
 		String r = "";
 		for(int i = 0 ; i<states.size();i++) {
@@ -493,6 +496,7 @@ public class Task2 {
 		}
 		return r;
 	}
+	
 	private static boolean existsTransition(String state, String alphabet) {
 		for(int i = 0 ; i < tranList.size() ; i++){
 			if(tranList.get(i).from.equals(state) && tranList.get(i).alphabet.equals(alphabet)){
@@ -509,14 +513,16 @@ class Transition {
 	ArrayList<String> fromAL;
 	ArrayList<String> toAL;
 	String alphabet;
-	public Transition(String from, String to, String alphabet){
-		this.from = from;
-		this.to = to;
-		this.alphabet = alphabet;
-	}
+
 	public Transition(ArrayList<String> from, ArrayList<String> to, String alphabet){
 		this.fromAL = from;
 		this.toAL = to;
+		this.alphabet = alphabet;
+	}
+
+	public Transition(String from, String to, String alphabet){
+		this.from = from;
+		this.to = to;
 		this.alphabet = alphabet;
 	}
 }
