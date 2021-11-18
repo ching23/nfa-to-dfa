@@ -212,15 +212,10 @@ public class Task2 {
 		buffReader.close();
 	}
 	
-<<<<<<< HEAD
-	
-	public static void constructAndSolveDFA(String DFAstates, String DFAacceptStates, String DFAAlphabet, String DFAinitState, String DFAtransitions, String DFAinput ) {
-=======
 	public static void constructAndSolveDFA(String DFAstates, String DFAacceptStates, String DFAAlphabet, 
 		String DFAinitState, String DFAtransitions, String DFAinput ) {
 		
 		// give lines new variable names
->>>>>>> 8a2b9ccfae650fdddb95fc256c76c397e33494d7
 		String line = DFAstates;
 		String line1 = DFAacceptStates;
 		String line2 = DFAAlphabet;
@@ -325,6 +320,7 @@ public class Task2 {
 			return;
 		}
 
+		// Construct the DFA and check string 
 		System.out.println("DFA Successfully Constructed");
 		for(String input : inputString){
 			String result = processInput(input);
@@ -337,30 +333,34 @@ public class Task2 {
 		System.out.println("");
 	}
 
-	private static void addStates(ArrayList<ArrayList<String>> allStates, ArrayList<String> someStates) {
-			if(!allStates.contains(someStates)) {
-				allStates.add(someStates);
+	//make states 
+	private static void addStates(ArrayList<ArrayList<String>> allStat, ArrayList<String> someStat) {
+			if(!allStat.contains(someStat)) {
+				allStat.add(someStat);
 			}		
 	}
 
-	public static void addTransitions(ArrayList<Transition> nFATransitions,ArrayList<Transition> newTransitions) {
-		for(int i = 0 ; i< newTransitions.size() ; i++) {
-			Collections.sort(newTransitions.get(i).fromAL);
-			Collections.sort(newTransitions.get(i).toAL);
+	//add transition
+	public static void addTransitions(ArrayList<Transition> nfaTrans,ArrayList<Transition> newTrans) {
+		// make new transitions from the nfa transitions for dfa
+		for(int i = 0 ; i< newTrans.size() ; i++) {
+			Collections.sort(newTrans.get(i).fromAL);
+			Collections.sort(newTrans.get(i).toAL);
 			int j;
-			for (j = 0;j < nFATransitions.size(); j++) {
-				Collections.sort(nFATransitions.get(j).fromAL);
-				Collections.sort(nFATransitions.get(j).toAL);
-				if(nFATransitions.get(j).fromAL.equals(newTransitions.get(i).fromAL) && nFATransitions.get(j).toAL.equals(newTransitions.get(i).toAL) && nFATransitions.get(j).alphabet.equals(newTransitions.get(i).alphabet)){
+			for (j = 0;j < nfaTrans.size(); j++) {
+				Collections.sort(nfaTrans.get(j).fromAL);
+				Collections.sort(nfaTrans.get(j).toAL);
+				if(nfaTrans.get(j).fromAL.equals(newTrans.get(i).fromAL) && nfaTrans.get(j).toAL.equals(newTrans.get(i).toAL) && nfaTrans.get(j).alphabet.equals(nfaTrans.get(i).alphabet)){
 					break;
 				}
 			}
-			if(j == nFATransitions.size()) {
-				nFATransitions.add(newTransitions.get(i));
+			if(j == nfaTrans.size()) {
+				nfaTrans.add(newTrans.get(i));
 			}
 		}
 	}
 
+	//read the nfa input 
 	private static String processInput(String input) {
 		String currentState = startState;
 		String [] inputArray = input.split(",");
@@ -375,10 +375,12 @@ public class Task2 {
 		return currentState;
 	}
 
+	//check start state
 	private static boolean checkStartState() {
 		return inArray(startState, states);
 	}
 
+	//check final states
 	private static boolean checkFinalState() {
 		for(String goal : finalState){
 			if(goal.equals("")){
@@ -392,6 +394,7 @@ public class Task2 {
 		return true;
 	}
 
+	// check if any line in input is empty
 	private static boolean checkIfEmpty() {
 		if(line1 == "" || line2 == "" || line3 == "" || line4 == "" || line5 == ""|| line6 == "") {
 			System.err.println("Error. Line is empty.");
@@ -400,6 +403,7 @@ public class Task2 {
 		return true;
 	}
 	
+	// check if there is something in the array
 	private static boolean inArray(String s , String [] array){
 		for(int i = 0 ; i < array.length;i++){
 			if(array[i].equals(s)){
@@ -409,6 +413,7 @@ public class Task2 {
 		return false;
 	}
 	
+	//check and add the epislon to an arraylist
 	public static ArrayList<String> getEpsilonClosure(String state,Transition[]transitions){
 		ArrayList<String> result = new ArrayList<>();
 		result.add(state);
@@ -420,6 +425,7 @@ public class Task2 {
 		return result;
 	}
 	
+	//get all the epsilon to put it into a dead states 
 	public static ArrayList<String> getAllEpsilonClosure(String state,Transition[]transitions){
 		ArrayList<String> result = getEpsilonClosure(state, transitions);
 		for(int i = 0 ; i < result.size();i++) {
@@ -433,10 +439,11 @@ public class Task2 {
 		return result;
 	}
 	
-	public static boolean hasAcceptState(String[] acceptStates, ArrayList<String> stateOfStates) {
-		for(int i = 0 ; i < stateOfStates.size();i++) {
+	//check all the accept states
+	public static boolean hasAcceptState(String[] acceptStates, ArrayList<String> state) {
+		for(int i = 0 ; i < state.size();i++) {
 			for( int j = 0 ; j < acceptStates.length ;j++) {
-				if(acceptStates[j].equals(stateOfStates.get(i))) {
+				if(acceptStates[j].equals(state.get(i))) {
 					return true;
 				}
 			}
@@ -444,11 +451,12 @@ public class Task2 {
 		return false;
 	}
 	
-	public static ArrayList<String> getStatesForGivenInput(ArrayList<String> stateOfStates, Transition[]transitions, String alphabet){
+	//get a given states
+	public static ArrayList<String> getStatesForGivenInput(ArrayList<String> state, Transition[]transitions, String alphabet){
 		ArrayList<String> result = new ArrayList<>();
-		for(int i = 0 ; i < stateOfStates.size() ; i++) {
+		for(int i = 0 ; i < state.size() ; i++) {
 			for(int j = 0 ; j < transitions.length ;j++) {
-				if(transitions[j].alphabet.equals(alphabet) && transitions[j].from.equals(stateOfStates.get(i))&&!result.contains(transitions[j].to)) {
+				if(transitions[j].alphabet.equals(alphabet) && transitions[j].from.equals(state.get(i))&&!result.contains(transitions[j].to)) {
 					result.add(transitions[j].to);
 					addIfNotContains(result, getAllEpsilonClosure(transitions[j].to, transitions));
 				}
@@ -457,6 +465,7 @@ public class Task2 {
 		return result;
 	}
 	
+	//check if the states is in the array if not adds
 	public static void addIfNotContains(ArrayList<String> result, ArrayList<String> arrayToBeAdded) {
 		for(int i = 0; i<arrayToBeAdded.size();i++) {
 			if(!result.contains(arrayToBeAdded.get(i))) {
@@ -464,33 +473,36 @@ public class Task2 {
 			}
 		}
 	}
-	
-	public static ArrayList<Transition> makeTransitions(ArrayList<String> stateOfStates,Transition[]transitions,String[]alphabets) {
+
+	//add and make transition into a new arrayList
+	public static ArrayList<Transition> makeTransitions(ArrayList<String> state,Transition[]trans,String[]alpha) {
 		ArrayList<Transition> result= new ArrayList<>();
-		for(int i = 0 ; i< alphabets.length ; i++) {
-			ArrayList<String> toStates = getStatesForGivenInput(stateOfStates, transitions, alphabets[i]);
+		for(int i = 0 ; i< alpha.length ; i++) {
+			ArrayList<String> toStates = getStatesForGivenInput(state, trans, alpha[i]);
 			if(toStates.size() == 0) {
 				toStates.add("Dead");
 			}
-			result.add(new Transition(stateOfStates, toStates, alphabets[i]));
+			result.add(new Transition(state, toStates, alpha[i]));
 		}
 		return result;
 	}
-
+	
+	// Print all the states 
 	public static String printStates(ArrayList<String>states) {
 		String r = "";
 		for(int i = 0 ; i<states.size();i++) {
 			r+=states.get(i);
 			if(i < states.size() - 1) {
-				r+="*";
+				r+=" | ";
 			}
 		}
 		return r;
 	}
 	
-	private static boolean existsTransition(String state, String alphabet) {
+	// check if the transition exists
+	private static boolean existsTransition(String state, String alpha) {
 		for(int i = 0 ; i < tranList.size() ; i++){
-			if(tranList.get(i).from.equals(state) && tranList.get(i).alphabet.equals(alphabet)){
+			if(tranList.get(i).from.equals(state) && tranList.get(i).alphabet.equals(alpha)){
 				return true;
 			}
 		}
@@ -498,6 +510,7 @@ public class Task2 {
 	}
 }
 
+// transition class that has all the points and alphabet
 class Transition {
 	String from;
 	String to;
@@ -510,9 +523,6 @@ class Transition {
 		this.toAL = to;
 		this.alphabet = alphabet;
 	}
-<<<<<<< HEAD
-}
-=======
 
 	public Transition(String from, String to, String alphabet){
 		this.from = from;
@@ -520,4 +530,3 @@ class Transition {
 		this.alphabet = alphabet;
 	}
 }
->>>>>>> 8a2b9ccfae650fdddb95fc256c76c397e33494d7
