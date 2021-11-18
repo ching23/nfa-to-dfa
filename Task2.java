@@ -133,7 +133,7 @@ public class Task2 {
 				continue;
 			}
 
-			System.out.println("NFA Successfully Constructed"); // if a valid NFA, print so
+			System.out.println("\nNFA Successfully Constructed"); // if a valid NFA, print so
 			System.out.println("Constructing DFA: "); // if a DFA can be made, print so
 			
 			// create start state of DFA
@@ -322,12 +322,13 @@ public class Task2 {
 
 		// Construct the DFA and check string 
 		System.out.println("DFA Successfully Constructed");
+		System.out.println("String Output: ");
 		for(String input : inputString){
 			String result = processInput(input);
 			if(inArray(result, finalState)){
-				System.out.println("Accepted");
+				System.out.println("\tAccepted");
 			} else {
-				System.out.println("Rejected");
+				System.out.println("\tRejected");
 			}
 		}
 		System.out.println("");
