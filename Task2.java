@@ -162,6 +162,7 @@ public class Task2 {
 		br.close();
 	}
 	
+	
 	public static void constructAndSolveDFA(String DFAstates, String DFAacceptStates, String DFAAlphabet, String DFAinitState, String DFAtransitions, String DFAinput ) {
 		String line = DFAstates;
 		String l1 = DFAacceptStates;
@@ -445,10 +446,3 @@ class Transition {
 		this.alphabet = alphabet;
 	}
 }
-
-
-
-
-
-
-
