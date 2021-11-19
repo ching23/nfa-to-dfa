@@ -46,7 +46,7 @@ public class Task2 {
 			line6 = buffReader.readLine(); // should be empty
 
 			// if a line is empty, print empty line and continue
-			if(!checkIfEmpty()){
+			if(!checkEmpty()){
 				System.err.print("empty line.");
 				continue;
 			}
@@ -54,7 +54,7 @@ public class Task2 {
 			finalState = line1.split(",");
 			
 			// if cannot check final state, continue
-			if(!checkFinalState()){
+			if(!checkFinal()){
 				continue;
 			}
 
@@ -62,7 +62,7 @@ public class Task2 {
 			startState = line3;
 
 			// if cannot check start state, print invalid start state and continue
-			if(!checkStartState()){
+			if(!checkStart()){
 				System.err.println(startState + " is an invalid state state.");
 				continue;
 			}
@@ -143,21 +143,21 @@ public class Task2 {
 			ArrayList<Transition> NFATransitions = new ArrayList<>();
 			// create all DFA states by storing the states into a new array list
 			ArrayList<ArrayList<String>> allStates = new ArrayList<>();
-			NFATransitions = makeTransitions(initialDFA, 
+			NFATransitions = makeTrans(initialDFA, 
 				tranList.toArray(new Transition[tranList.size()]), alphabets);
 			
 			// loop through all the NFA transitions to create new DFA transitions
 			for(int i = 0; i < NFATransitions.size() ; i ++) {
-				addStates(allStates, NFATransitions.get(i).fromAL);
-				addStates(allStates, NFATransitions.get(i).toAL);
-				addTransitions(NFATransitions, makeTransitions(NFATransitions.get(i).toAL, 
+				addStat(allStates, NFATransitions.get(i).fromAL);
+				addStat(allStates, NFATransitions.get(i).toAL);
+				addTrans(NFATransitions, makeTrans(NFATransitions.get(i).toAL, 
 					tranList.toArray(new Transition[tranList.size()]), alphabets));
 			}
 			// print all the DFA states
 			String DFAStates = "";
 			for(int i = 0 ; i < allStates.size();i++) {
 				ArrayList<String> stateInAllStates = allStates.get(i);
-				DFAStates += printStates(stateInAllStates);
+				DFAStates += printStat(stateInAllStates);
 				if(i<allStates.size()-1) {
 					// separate each state with a comma
 					DFAStates += ",";
@@ -172,7 +172,7 @@ public class Task2 {
 			for(int i = 0 ; i < allStates.size();i++) {
 				ArrayList<String> stateInAllStates = allStates.get(i);
 				if(hasAcceptState(finalState, stateInAllStates)) {
-					DFAfinalState += printStates(stateInAllStates);
+					DFAfinalState += printStat(stateInAllStates);
 					if(i<allStates.size()-1) {
 						DFAfinalState += ",";
 					}
@@ -185,15 +185,15 @@ public class Task2 {
 			System.out.println("DFA Alphabet: " + line2);
 			
 			// print the initial states
-			String DFAInitState = printStates(initialDFA);
+			String DFAInitState = printStat(initialDFA);
 			System.out.println("DFA Initial State: " + DFAInitState);
 			
 			// print all transitions (DFA and NFA)
 			String DFATransitions = "";
 			for(int i = 0 ; i<NFATransitions.size();i++) {
-				DFATransitions +=printStates(NFATransitions.get(i).fromAL);
+				DFATransitions +=printStat(NFATransitions.get(i).fromAL);
 				DFATransitions +=",";
-				DFATransitions +=printStates(NFATransitions.get(i).toAL);
+				DFATransitions +=printStat(NFATransitions.get(i).toAL);
 				DFATransitions +=",";
 				DFATransitions +=NFATransitions.get(i).alphabet;
 				if(i < NFATransitions.size() - 1) {
@@ -226,7 +226,7 @@ public class Task2 {
 		finalState = line1.split(",");
 		
 		// if there is no final state, return
-		if(!checkFinalState()){
+		if(!checkFinal()){
 			return;
 		}
 
@@ -235,8 +235,8 @@ public class Task2 {
 		startState = line3;
 		
 		// if there is no start state, return
-		if(!checkStartState()){
-			System.err.println(startState + " is an invalid state state.");
+		if(!checkStart()){
+			System.err.println(startState + " is an invalid start state.");
 			return;
 		}
 
@@ -308,7 +308,7 @@ public class Task2 {
 		boolean error4 = false;
 		for(String state : states){
 			for(String alphabet : alphabets){
-				if(!existsTransition(state,alphabet)){
+				if(!existsTrans(state,alphabet)){
 					error4 = true;
 					System.err.println("Missing transition for state " + state + " on input " + alphabet );
 					break;
@@ -323,7 +323,7 @@ public class Task2 {
 		// Construct the DFA and check string 
 		System.out.println("DFA Successfully Constructed");
 		for(String input : inputString){
-			String result = processInput(input);
+			String result = readInput(input);
 			if(inArray(result, finalState)){
 				System.out.println("Accepted");
 			} else {
@@ -334,14 +334,14 @@ public class Task2 {
 	}
 
 	//make states 
-	private static void addStates(ArrayList<ArrayList<String>> allStat, ArrayList<String> someStat) {
+	private static void addStat(ArrayList<ArrayList<String>> allStat, ArrayList<String> someStat) {
 			if(!allStat.contains(someStat)) {
 				allStat.add(someStat);
 			}		
 	}
 
 	//add transition
-	public static void addTransitions(ArrayList<Transition> nfaTrans,ArrayList<Transition> newTrans) {
+	public static void addTrans(ArrayList<Transition> nfaTrans,ArrayList<Transition> newTrans) {
 		// make new transitions from the nfa transitions for dfa
 		for(int i = 0 ; i< newTrans.size() ; i++) {
 			Collections.sort(newTrans.get(i).fromAL);
@@ -361,7 +361,7 @@ public class Task2 {
 	}
 
 	//read the nfa input 
-	private static String processInput(String input) {
+	private static String readInput(String input) {
 		String currentState = startState;
 		String [] inputArray = input.split(",");
 		for(int i = 0 ; i< inputArray.length ;i++){
@@ -376,18 +376,18 @@ public class Task2 {
 	}
 
 	//check start state
-	private static boolean checkStartState() {
+	private static boolean checkStart() {
 		return inArray(startState, states);
 	}
 
 	//check final states
-	private static boolean checkFinalState() {
+	private static boolean checkFinal() {
 		for(String goal : finalState){
 			if(goal.equals("")){
 				continue;
 			}
 			if(!inArray(goal,states)){
-				System.err.println("Invalid accept state " + goal);
+				System.err.println("Invalid accept state " + goal + "\n");
 				return false;
 			}
 		}
@@ -395,7 +395,7 @@ public class Task2 {
 	}
 
 	// check if any line in input is empty
-	private static boolean checkIfEmpty() {
+	private static boolean checkEmpty() {
 		if(line1 == "" || line2 == "" || line3 == "" || line4 == "" || line5 == ""|| line6 == "") {
 			System.err.println("Error. Line is empty.");
 			return false;
@@ -452,7 +452,7 @@ public class Task2 {
 	}
 	
 	//get a given states
-	public static ArrayList<String> getStatesForGivenInput(ArrayList<String> state, Transition[]transitions, String alphabet){
+	public static ArrayList<String> getStates(ArrayList<String> state, Transition[]transitions, String alphabet){
 		ArrayList<String> result = new ArrayList<>();
 		for(int i = 0 ; i < state.size() ; i++) {
 			for(int j = 0 ; j < transitions.length ;j++) {
@@ -475,10 +475,10 @@ public class Task2 {
 	}
 
 	//add and make transition into a new arrayList
-	public static ArrayList<Transition> makeTransitions(ArrayList<String> state,Transition[]trans,String[]alpha) {
+	public static ArrayList<Transition> makeTrans(ArrayList<String> state,Transition[]trans,String[]alpha) {
 		ArrayList<Transition> result= new ArrayList<>();
 		for(int i = 0 ; i< alpha.length ; i++) {
-			ArrayList<String> toStates = getStatesForGivenInput(state, trans, alpha[i]);
+			ArrayList<String> toStates = getStates(state, trans, alpha[i]);
 			if(toStates.size() == 0) {
 				toStates.add("Dead");
 			}
@@ -488,7 +488,7 @@ public class Task2 {
 	}
 	
 	// Print all the states 
-	public static String printStates(ArrayList<String>states) {
+	public static String printStat(ArrayList<String>states) {
 		String r = "";
 		for(int i = 0 ; i<states.size();i++) {
 			r+=states.get(i);
@@ -500,7 +500,7 @@ public class Task2 {
 	}
 	
 	// check if the transition exists
-	private static boolean existsTransition(String state, String alpha) {
+	private static boolean existsTrans(String state, String alpha) {
 		for(int i = 0 ; i < tranList.size() ; i++){
 			if(tranList.get(i).from.equals(state) && tranList.get(i).alphabet.equals(alpha)){
 				return true;
