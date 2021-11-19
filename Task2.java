@@ -134,25 +134,22 @@ public class Task2 {
 			System.out.println("Constructing DFA: "); // if a DFA can be made, print so
 			
 			// create start state of DFA
-			ArrayList<String> initialDFA = getEpsilonInDead(startState, 
-				tranList.toArray(new Transition[tranList.size()]));
+			ArrayList<String> initialDFA = getEpsilonInDead(startState, tranList.toArray(new Transition[tranList.size()]));
 			// create DFA transitions by storing the transitions into a new array list
 			ArrayList<Transition> NFATransitions = new ArrayList<>();
 			// create all DFA states by storing the states into a new array list
 			ArrayList<ArrayList<String>> allStates = new ArrayList<>();
-			NFATransitions = createTrans(initialDFA, 
-				tranList.toArray(new Transition[tranList.size()]), alphabets);
+			NFATransitions = createTrans(initialDFA, tranList.toArray(new Transition[tranList.size()]), alphabets);
 			
 			// loop through all the NFA transitions to create new DFA transitions
 			for(int i = 0; i < NFATransitions.size() ; i ++) {
 				createStates(allStates, NFATransitions.get(i).fromAL);
 				createStates(allStates, NFATransitions.get(i).toAL);
-				createTrans(NFATransitions, createTrans(NFATransitions.get(i).toAL, 
-					tranList.toArray(new Transition[tranList.size()]), alphabets));
+				createTransition(NFATransitions, createTrans(NFATransitions.get(i).toAL, tranList.toArray(new Transition[tranList.size()]), alphabets));
 			}
 			// print all the DFA states
 			String DFAStates = "";
-			for(int i = 0 ; i < allStates.size();i++) {
+			for(int i = 0 ; i < allStates.size(); i++) {
 				ArrayList<String> stateInAllStates = allStates.get(i);
 				DFAStates += printStat(stateInAllStates);
 				if(i<allStates.size()-1) {
@@ -194,7 +191,7 @@ public class Task2 {
 				DFATransitions +=",";
 				DFATransitions +=NFATransitions.get(i).alphabet;
 				if(i < NFATransitions.size() - 1) {
-					DFATransitions +="";
+					DFATransitions +="#";
 				}
 			}
 
@@ -209,8 +206,7 @@ public class Task2 {
 		buffReader.close();
 	}
 	
-	public static void constructDFA(String DFAstates, String DFAacceptStates, String DFAAlphabet, 
-		String DFAinitState, String DFAtransitions, String DFAinput ) {
+	public static void constructDFA(String DFAstates, String DFAacceptStates, String DFAAlphabet, String DFAinitState, String DFAtransitions, String DFAinput ) {
 		
 		// give lines new variable names
 		String line = DFAstates;
@@ -238,7 +234,7 @@ public class Task2 {
 		}
 
 		// separate each transition with a 
-		transitions = line4.split("");
+		transitions = line4.split("#");
 		boolean error = false;
 		boolean error2 = false;
 
@@ -280,7 +276,7 @@ public class Task2 {
 			return;
 		}
 
-		inputString = line5.split("");
+		inputString = line5.split("#");
 		boolean error3 = false;
 		String errorInput = "";
 		for(String input : inputString){
@@ -335,7 +331,7 @@ public class Task2 {
 	}
 
 	//add transition
-	public static void createTrans(ArrayList<Transition> nfaTrans,ArrayList<Transition> newTrans) {
+	public static void createTransition(ArrayList<Transition> nfaTrans,ArrayList<Transition> newTrans) {
 		// make new transitions from the nfa transitions for dfa
 		for(int i = 0 ; i< newTrans.size() ; i++) {
 			Collections.sort(newTrans.get(i).fromAL);
@@ -476,7 +472,7 @@ public class Task2 {
 			if(toStates.size() == 0) {
 				toStates.add("Dead");
 			}
-			result.add(new Transition(state, toStates, alpha[i]));
+			result.add(new Transition(state, toStates, alphabets[i]));
 		}
 		return result;
 	}
@@ -487,7 +483,7 @@ public class Task2 {
 		for(int i = 0 ; i<states.size();i++) {
 			r+=states.get(i);
 			if(i < states.size() - 1) {
-				r+=" | ";
+				r+="*";
 			}
 		}
 		return r;
